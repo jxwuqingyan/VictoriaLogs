@@ -483,6 +483,9 @@ func marshalQueryStatsBlock(dst []byte, qctx *logstorage.QueryContext) []byte {
 
 func getInt64FromRequest(r *http.Request, argName string) (int64, error) {
 	s := r.FormValue(argName)
+	if s == "" {
+		return 0, fmt.Errorf("missing the required arg %s", argName)
+	}
 	n, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		return 0, fmt.Errorf("cannot parse %s=%q: %w", argName, s, err)
