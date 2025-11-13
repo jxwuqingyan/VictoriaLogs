@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/VictoriaMetrics/VictoriaMetrics/lib/httputil"
 
@@ -33,9 +32,9 @@ func RequestHandler(path string, w http.ResponseWriter, r *http.Request) bool {
 
 // See https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
 func handleInsert(r *http.Request, w http.ResponseWriter) {
-	contentType := r.Header.Get("Content-Type")
+	ct := r.Header.Get("Content-Type")
 	switch {
-	case strings.HasPrefix(contentType, "application/json"):
+	case insertutil.IsJSONContentType(ct):
 		handleJSON(r, w)
 	default:
 		// Protobuf request body should be handled by default according to https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
