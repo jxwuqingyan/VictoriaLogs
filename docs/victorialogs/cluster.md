@@ -322,13 +322,15 @@ The following approaches exist for manual data re-balancing among old and new `v
 
 ## Quick start
 
-The following guide covers the following topics for a Linux host:
+The following topics for are covered below:
 
 - How to download the VictoriaLogs executable.
 - How to start a VictoriaLogs cluster, which consists of two `vlstorage` nodes, a single `vlinsert` node and a single `vlselect` node
   running on localhost according to [cluster architecture](https://docs.victoriametrics.com/victorialogs/cluster/#architecture).
 - How to ingest logs into the cluster.
 - How to query the ingested logs.
+
+If you want running VictoriaLogs cluster in Kubernetes, then please read [these docs](https://docs.victoriametrics.com/helm/victorialogs-cluster/).
 
 Download and unpack the latest VictoriaLogs release:
 
