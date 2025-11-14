@@ -13,8 +13,11 @@ aliases:
 - /victorialogs/CHANGELOG.html
 ---
 
-The following `tip` changes can be tested by building VictoriaLogs from the latest commit of [VictoriaLogs](https://github.com/VictoriaMetrics/VictoriaLogs/) repository
-according to [these docs](https://docs.victoriametrics.com/victorialogs/quickstart/#building-from-source-code)
+The following `tip` changes can be tested by building VictoriaLogs components from the latest commit of [VictoriaLogs](https://github.com/VictoriaMetrics/VictoriaLogs/) repository
+according to the follosing docs:
+
+* [How to build VictoriaLogs from source code](https://docs.victoriametrics.com/victorialogs/quickstart/#building-from-source-code)
+* [How to build vlagent from source code](https://docs.victoriametrics.com/vlagent/#building-from-source-code)
 
 ## tip
 
