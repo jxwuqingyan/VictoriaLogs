@@ -75,12 +75,12 @@ var (
 )
 
 func pushProtobufRequest(data []byte, lmp insertutil.LogMessageProcessor, msgFields []string, useDefaultStreamFields bool) error {
-	pushLogs := func(timestamp int64, fields []logstorage.Field, resourceFieldsLen int) {
-		logstorage.RenameField(fields[resourceFieldsLen:], msgFields, "_msg")
+	pushLogs := func(timestamp int64, fields []logstorage.Field, streamFieldsLen int) {
+		logstorage.RenameField(fields[streamFieldsLen:], msgFields, "_msg")
 
 		var streamFields []logstorage.Field
 		if useDefaultStreamFields {
-			streamFields = fields[:resourceFieldsLen]
+			streamFields = fields[:streamFieldsLen]
 		}
 
 		lmp.AddRow(timestamp, fields, streamFields)

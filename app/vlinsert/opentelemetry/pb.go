@@ -13,7 +13,7 @@ import (
 //
 // The handler must copy resource and attributes before returning,
 // since the caller can change them, so they become invalid if not copied.
-type pushLogsHandler func(timestamp int64, fields []logstorage.Field, resourceFieldsLen int)
+type pushLogsHandler func(timestamp int64, fields []logstorage.Field, streamFieldsLen int)
 
 // decodeLogsData parses a LogsData protobuf message from src and calls the provided pushLogs for each decoded log record.
 //
@@ -66,7 +66,7 @@ func decodeResourceLogs(src []byte, pushLogs pushLogsHandler) (err error) {
 			return fmt.Errorf("cannot decode Resource: %w", err)
 		}
 	}
-	resourceFieldsLen := len(fs.Fields)
+	streamFieldsLen := len(fs.Fields)
 
 	// Decode scope_logs
 	var fc easyproto.FieldContext
@@ -82,7 +82,7 @@ func decodeResourceLogs(src []byte, pushLogs pushLogsHandler) (err error) {
 				return fmt.Errorf("cannot read ScopeLogs data")
 			}
 
-			fs.Fields = fs.Fields[:resourceFieldsLen]
+			fs.Fields = fs.Fields[:streamFieldsLen]
 
 			if err := decodeScopeLogs(data, fs, pushLogs); err != nil {
 				return fmt.Errorf("cannot decode ScopeLogs: %w", err)
@@ -126,7 +126,7 @@ func decodeScopeLogs(src []byte, fs *logstorage.Fields, pushLogs pushLogsHandler
 	fb := getFmtBuffer()
 	defer putFmtBuffer(fb)
 
-	resourceFieldsLen := len(fs.Fields)
+	streamFieldsLen := len(fs.Fields)
 
 	var fc easyproto.FieldContext
 	for len(src) > 0 {
@@ -142,25 +142,25 @@ func decodeScopeLogs(src []byte, fs *logstorage.Fields, pushLogs pushLogsHandler
 			}
 
 			fb.reset()
-			fs.Fields = fs.Fields[:resourceFieldsLen]
+			fs.Fields = fs.Fields[:streamFieldsLen]
 
 			eventName, timestamp, err := decodeLogRecord(data, fs, fb)
 			if err != nil {
 				return fmt.Errorf("cannot decode LogRecord: %w", err)
 			}
 			if eventName != "" {
-				// Insert eventName into resource fields
+				// Insert eventName into stream fields
 				fs.Add("dummy", "value")
-				for i := len(fs.Fields) - 1; i > resourceFieldsLen; i-- {
+				for i := len(fs.Fields) - 1; i > streamFieldsLen; i-- {
 					fs.Fields[i] = fs.Fields[i-1]
 				}
-				f := &fs.Fields[resourceFieldsLen]
+				f := &fs.Fields[streamFieldsLen]
 				f.Name = "event_name"
 				f.Value = eventName
 
-				pushLogs(timestamp, fs.Fields, resourceFieldsLen+1)
+				pushLogs(timestamp, fs.Fields, streamFieldsLen+1)
 			} else {
-				pushLogs(timestamp, fs.Fields, resourceFieldsLen)
+				pushLogs(timestamp, fs.Fields, streamFieldsLen)
 			}
 		}
 	}
