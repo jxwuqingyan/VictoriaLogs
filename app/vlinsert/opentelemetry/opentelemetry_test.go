@@ -100,6 +100,8 @@ func TestPushProtobufRequest(t *testing.T) {
 			"attributes": [
 				{"key":"logger","value":{"stringValue":"context"}},
 				{"key":"instance_id","value":{"intValue":10}},
+				{"key":"","value":{"stringValue":"missing-key"}},
+				{"key":"missing-value","value":{"stringValue":""}},
 				{"key":"node_taints","value":{"keyValueList":{"values":
 					[{"key":"role","value":{"stringValue":"dev"}},{"key":"cluster_load_percent","value":{"doubleValue":0.55}}]
 				}}}
@@ -418,7 +420,9 @@ type keyValue struct {
 }
 
 func (kv *keyValue) marshalProtobuf(mm *easyproto.MessageMarshaler) {
-	mm.AppendString(1, kv.Key)
+	if kv.Key != "" {
+		mm.AppendString(1, kv.Key)
+	}
 	if kv.Value != nil {
 		kv.Value.marshalProtobuf(mm.AppendMessage(2))
 	}

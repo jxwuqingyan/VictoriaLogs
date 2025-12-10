@@ -359,7 +359,9 @@ func decodeKeyValue(src []byte, fs *logstorage.Fields, fb *fmtBuffer, fieldNameP
 		return fmt.Errorf("cannot find Key in KeyValue: %w", err)
 	}
 	if !ok {
-		return fmt.Errorf("key is missing in KeyValue")
+		// Key is missing, skip it.
+		// See https://github.com/VictoriaMetrics/VictoriaLogs/issues/869#issuecomment-3631307996
+		return nil
 	}
 	fieldName := fb.formatSubFieldName(fieldNamePrefix, key)
 
