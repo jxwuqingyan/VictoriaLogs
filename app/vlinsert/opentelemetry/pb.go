@@ -55,11 +55,9 @@ func decodeResourceLogs(src []byte, pushLogs pushLogsHandler) (err error) {
 
 	fs := logstorage.GetFields()
 	defer func() {
-		// Manually clear all the fields up to capacity in order to remove references to src and help GC freeing up the used memory.
-		// The logstorage.PutFields() clears only the references up to len(fs.Fields).
-		clear(fs.Fields[:cap(fs.Fields)])
-		fs.Fields = fs.Fields[:0]
-
+		// Explicitly clear fs up to its' capacity in order to free up
+		// all the references to the original byte slice, so it could be freed by Go GC.
+		fs.ClearUpToCapacity()
 		logstorage.PutFields(fs)
 	}()
 

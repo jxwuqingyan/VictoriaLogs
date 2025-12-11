@@ -82,7 +82,12 @@ func parseJSONRequest(data []byte, lmp insertutil.LogMessageProcessor, msgFields
 	}
 
 	fieldsTmp := logstorage.GetFields()
-	defer logstorage.PutFields(fieldsTmp)
+	defer func() {
+		// Explicitly clear fieldsTmp up to its' capacity in order to free up
+		// all the references to the original byte slice, so it could be freed by Go GC.
+		fieldsTmp.ClearUpToCapacity()
+		logstorage.PutFields(fieldsTmp)
+	}()
 
 	var msgParser *logstorage.JSONParser
 	if parseMessage {
