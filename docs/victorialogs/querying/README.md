@@ -1068,6 +1068,7 @@ All the [querying APIs at VictoriaLogs](https://docs.victoriametrics.com/victori
 which can be used for hiding the specific [log fields](https://docs.victoriametrics.com/victorialogs/keyconcepts/#data-model) during query execution.
 These fields become invisible during query execution - they aren't visible during [filtering](https://docs.victoriametrics.com/victorialogs/logsql/#filters)
 and they aren't visible during execution of all the [LogsQL pipes](https://docs.victoriametrics.com/victorialogs/logsql/#pipes).
+
 This functionality is useful for restricting acces to certain log fields with sensitive information for the particular authorized users.
 The `hidden_fields_filters` query arg can be attached to the request by auth proxy such as [vmauth](https://docs.victoriametrics.com/victoriametrics/vmauth/)
 according to [these docs](https://docs.victoriametrics.com/victoriametrics/vmauth/#enforcing-query-args).
@@ -1081,6 +1082,12 @@ VictoriaLogs accepts the following formats for the `hidden_fields_filters` query
   JSON array formatting allows specifying field names with commas contrary to the comma-separated formatting.
 
 Make sure that the `hidden_fields_filters` value is properly encoded with [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding).
+
+The `_stream` field uniquely identifies a [log stream](https://docs.victoriametrics.com/victorialogs/keyconcepts/#stream-fields), so the `hidden_fields_filters`
+isn't applied to the contents of the `_stream` field in order to prevent from duplicate `_stream` values for distinct log streams.
+For example, if the `_stream` field equals to `{app="nginx",env="prod"}`, then `hidden_fields_filters=app` doesn't hide `app="nginx"` from the `_stream` field.
+It also doesn't prevent from searching for logs with `{app="nginx"}` [stream filter](https://docs.victoriametrics.com/victorialogs/logsql/#stream-filter).
+So do not put sensitive log fields into `_stream` if you are going to hide them with `hidden_fields_filters`.
 
 See also [extra filters](https://docs.victoriametrics.com/victorialogs/querying/#extra-filters).
 
