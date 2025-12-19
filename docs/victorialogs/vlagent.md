@@ -229,7 +229,7 @@ The collected profiles may be analyzed with [go tool pprof](https://github.com/g
 
 It is safe to share the collected profiles from a security point of view, since they do not contain sensitive information.
 
-### Building from source code
+## Building from source code
 
 Follow these steps to build vlagent from source code:
 
